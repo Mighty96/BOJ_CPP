@@ -13,17 +13,13 @@ int dp(int now)
 {
     if (d[now] != -1)
         return d[now];
+
     if (forBuild[now].empty())
-    {
         d[now] = cost[now];
-    }
     else
-    {
         for (auto& e : forBuild[now])
-        {
             d[now] = (d[now] > dp(e) + cost[now]) ? d[now] : (dp(e) + cost[now]);
-        }
-    }
+
     return d[now];
 }
 
