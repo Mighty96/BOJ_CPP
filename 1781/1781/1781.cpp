@@ -28,7 +28,7 @@ int find(int deadline)
     }
     else
     {   
-        if (match[deadline] = deadline)
+        if (match[deadline] == deadline)
         {
             match[deadline] = find(deadline - 1);
         }
@@ -53,6 +53,9 @@ void push(int deadline, int ramen)
 
 int main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+
     cin >> n;
 
     int temp1, temp2;
