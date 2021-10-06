@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 #include <algorithm>
 
 using namespace std;
@@ -6,8 +7,45 @@ using namespace std;
 int n, m;
 
 string tofu[14];
-long long dp[14 * 14][1 << 14];
-int price[100][100];
+int dp[14 * 14][1 << 14];
+int price[6][6] = {
+    {10, 8, 7, 5, 0, 1},
+    {8, 6, 4, 3, 0, 1},
+    {7, 4, 3, 2, 0, 1},
+    {5, 3, 2, 2, 0, 1},
+    {0, 0, 0, 0, 0, 0},
+    {1, 1, 1, 1, 0, 0}
+};
+
+int d(int num, int bit)
+{
+    if (num >= n * m)
+        return 0;
+
+    if (dp[num][bit] != -1)
+        return dp[num][bit];
+
+    dp[num][bit] = d(num + 1, (bit << 1) & ((1 << m) - 1));
+
+    int y = num / m;
+    int x = num % m;
+
+    if (!(bit & (1 << (m - 1))))
+    {
+        if (!(bit & (1 << (m - 2))) && x < m - 1)
+        {
+            dp[num][bit] = 
+                max(dp[num][bit], price[tofu[y][x] - 'A'][tofu[y][x + 1] - 'A'] + d(num + 2, (bit << 2) & ((1 << m) - 1)));
+        }
+        if (y < n - 1)
+        {
+            dp[num][bit] =
+                max(dp[num][bit], price[tofu[y][x] - 'A'][tofu[y + 1][x] - 'A'] + d(num + 1, ((bit << 1) + 1) & ((1 << m) - 1)));
+        }
+    }
+
+    return dp[num][bit];
+}
 
 
 int main()
@@ -16,60 +54,10 @@ int main()
 
     for (int i = 0; i < n; i++)
         cin >> tofu[i];
-    price['A']['A'] = 10;
-    price['A']['B'] = 8;
-    price['A']['C'] = 7;
-    price['A']['D'] = 5;
-    price['A']['F'] = 1;
-    price['B']['A'] = 8;
-    price['B']['B'] = 6;
-    price['B']['C'] = 4;
-    price['B']['D'] = 3;
-    price['B']['F'] = 1;
-    price['C']['A'] = 7;
-    price['C']['B'] = 4;
-    price['C']['C'] = 3;
-    price['C']['D'] = 2;
-    price['C']['F'] = 1;
-    price['D']['A'] = 5;
-    price['D']['B'] = 3;
-    price['D']['C'] = 2;
-    price['D']['D'] = 2;
-    price['D']['F'] = 1;
-    price['F']['A'] = 1;
-    price['F']['B'] = 1;
-    price['F']['C'] = 1;
-    price['F']['D'] = 1;
-    price['F']['F'] = 0;
-
-    long long max_num = 0;
-
-    //층수
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < (1 << m); j++)
-        {
-            for (int k = 0; k < m - 1; k++)
-            {
-                if (j & (1 << k)) continue;
-
-                //가로
-                if (!(j & (1 << (k + 1))))
-                {
-                    dp[i][j | (1 << k) | (1 << (k + 1))] =
-                        max(dp[i][j | (1 << k) | (1 << (k + 1))], dp[i][j] + price[tofu[i][k]][tofu[i][k + 1]]);
-                    max_num = max(max_num, dp[i][j | (1 << k) | (1 << (k + 1))]);
-                }
-
-                //세로
-                if (i < n - 1)
-                {
-                    dp[i + 1][j] = max(dp[i + 1][j], dp[i][j] + price[tofu[i][k]][tofu[i + 1][k]]);
-                    max_num = max(max_num, dp[i + 1][j]);
-                }
-            }
-        }
-    }
-
     
+    memset(dp, -1, sizeof(dp));
+    
+    cout << d(0, 0) << '\n';
+
+    return 0;
 }
