@@ -4,9 +4,9 @@
 #include <queue>
 
 using namespace std;
-int r, c;
-int map[101][101];
-int cnt[101][101];
+int n;
+int map[51][51];
+int cnt[51][51];
 int d_y[4] = { 0, 0, 1, -1 };
 int d_x[4] = { 1, -1, 0, 0 };
 
@@ -25,14 +25,14 @@ priority_queue<p> pq;
 
 int main()
 {
-	cin >> c >> r;
+	cin >> n;
 
-	memset(cnt, 0x3f, sizeof(int) * 101 * 101);
+	memset(cnt, 0x3f, sizeof(int) * 51 * 51);
 
 	string temp;
-	for (int i = 0; i < r; i++) {
+	for (int i = 0; i < n; i++) {
 		cin >> temp;
-		for (int j = 0; j < c; j++) {
+		for (int j = 0; j < n; j++) {
 			map[i][j] = temp[j] - '0';
 		}
 	}
@@ -47,18 +47,18 @@ int main()
 		if (now.cost > cnt[now.y][now.x])
 			continue;
 
-		if (now.y == r - 1 && now.x == c - 1) {
+		if (now.y == n - 1 && now.x == n - 1) {
 			break;
 		}
 
 		for (int i = 0; i < 4; i++) {
-			if (now.y + d_y[i] >= 0 && now.y + d_y[i] < r &&
-				now.x + d_x[i] >= 0 && now.x + d_x[i] < c) {
-				if (map[now.y + d_y[i]][now.x + d_x[i]] == 0 && cnt[now.y + d_y[i]][now.x + d_x[i]] > now.cost) {
+			if (now.y + d_y[i] >= 0 && now.y + d_y[i] < n &&
+				now.x + d_x[i] >= 0 && now.x + d_x[i] < n) {
+				if (map[now.y + d_y[i]][now.x + d_x[i]] == 1 && cnt[now.y + d_y[i]][now.x + d_x[i]] > now.cost) {
 					cnt[now.y + d_y[i]][now.x + d_x[i]] = now.cost;
 					pq.push(p(now.y + d_y[i], now.x + d_x[i], now.cost));
 				}
-				else if (map[now.y + d_y[i]][now.x + d_x[i]] == 1 && cnt[now.y + d_y[i]][now.x + d_x[i]] > now.cost + 1) {
+				else if (map[now.y + d_y[i]][now.x + d_x[i]] == 0 && cnt[now.y + d_y[i]][now.x + d_x[i]] > now.cost + 1) {
 					cnt[now.y + d_y[i]][now.x + d_x[i]] = now.cost + 1;
 					pq.push(p(now.y + d_y[i], now.x + d_x[i], now.cost + 1));
 				}
@@ -66,6 +66,6 @@ int main()
 		}
 	}
 
-	cout << cnt[r - 1][c - 1] << '\n';
+	cout << cnt[n - 1][n - 1] << '\n';
 	return 0;
 }
